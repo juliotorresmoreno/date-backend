@@ -1,0 +1,35 @@
+
+###
+POST http://localhost:8080/users/sign-up
+Content-Type: application/x-www-form-urlencoded
+
+{
+    "firstname": "julio",
+    "lastname": "torres",
+    "email": "jtorres990@gmail.com",
+    "phone": "3013819315",
+    "password": "12345678"
+}
+
+###
+POST http://localhost:8080/users/sign-up
+Content-Type: application/x-www-form-urlencoded
+Accept: application/json
+
+firstname=julio&lastname=torres&email=jtorres990@gmail.com&phone=3013819315&password=12345678
+
+###
+POST http://localhost:8080/users/sign-in
+Content-Type: application/x-www-form-urlencoded
+Accept: application/json
+
+email=jtorres990@gmail.com&password=12345678
+
+###
+GET http://localhost:8080/cities
+
+###
+GET http://localhost:8080/cities
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJqdGkiOiJzb2Z0dGVrSldUIiwic3ViIjoianRvcnJlczk5MEBnbWFpbC5jb20iLCJhdXRob3JpdGllcyI6WyJST0xFX1VTRVIiXSwiaWF0IjoxNjA4NjkwNDI0LCJleHAiOjE2MDg2OTc2MjR9.8hBZCXq2TOYpuMfu5zoe2WHAKS17kyqaTHm3A7To-OkQRY-t2bjKI6aQ832751jAcRDCLSzOoFWkC6z6h_JSHA
+
+
