@@ -1,4 +1,6 @@
 
+@authorization=Bearer eyJhbGciOiJIUzUxMiJ9.eyJqdGkiOiJzb2Z0dGVrSldUIiwic3ViIjoianRvcnJlczk5MEBnbWFpbC5jb20iLCJhdXRob3JpdGllcyI6WyJST0xFX1VTRVIiXSwiaWF0IjoxNjA4OTI4NzY0LCJleHAiOjE2MDkwMTUxNjR9.6dopaAiIvlHDVlo6fZ7TEke_C7mL4q6nG1P5f0G8GSvzBcxkqqPbb98Xd6IF_bzbBkZuybZiBN61VQqY-Qs0oQ
+
 ###
 POST http://localhost:8080/users/sign-up
 Content-Type: application/x-www-form-urlencoded
@@ -32,4 +34,21 @@ GET http://localhost:8080/cities
 GET http://localhost:8080/cities
 Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJqdGkiOiJzb2Z0dGVrSldUIiwic3ViIjoianRvcnJlczk5MEBnbWFpbC5jb20iLCJhdXRob3JpdGllcyI6WyJST0xFX1VTRVIiXSwiaWF0IjoxNjA4NjkwNDI0LCJleHAiOjE2MDg2OTc2MjR9.8hBZCXq2TOYpuMfu5zoe2WHAKS17kyqaTHm3A7To-OkQRY-t2bjKI6aQ832751jAcRDCLSzOoFWkC6z6h_JSHA
 
+###
+GET http://localhost:8080/people
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJqdGkiOiJzb2Z0dGVrSldUIiwic3ViIjoianRvcnJlczk5MEBnbWFpbC5jb20iLCJhdXRob3JpdGllcyI6WyJST0xFX1VTRVIiXSwiaWF0IjoxNjA4ODQ4MjcyLCJleHAiOjE2MDg4NTU0NzJ9.2Ej02SzHJt1SNf_vqjK0N6CoDBWiqX1tDH2exXELF-d7dXkSGpcb3X9Jz0pmvGRRlf9q6k3ZXfWNKmDP_nTgpA
+
+###
+GET http://localhost:8080/people
+
+###
+PATCH http://localhost:8080/profile
+Content-Type: application/json
+Authorization: {{authorization}}
+
+{
+    "title": "nada",
+    "description": "flojo profesional",
+    "pets": "si, tengo"
+}
 
