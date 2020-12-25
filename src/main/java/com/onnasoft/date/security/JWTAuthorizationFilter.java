@@ -3,19 +3,18 @@ package com.onnasoft.date.security;
 import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
-
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
+import com.onnasoft.date.services.UserService;
+import com.onnasoft.date.services.UserService.UserNotFound;
 import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
-
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -27,6 +26,8 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
     private final String PREFIX = "Bearer ";
     private String SECRET = "";
 
+    private UserService userService;
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
@@ -34,7 +35,7 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
             if (existsJWTToken(request, response)) {
                 Claims claims = validateToken(request);
                 if (claims.get("authorities") != null) {
-                    setUpSpringAuthentication(claims);
+                    setUpSpringAuthentication(request, claims);
                 } else {
                     SecurityContextHolder.clearContext();
                 }
@@ -45,8 +46,12 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
         } catch (ExpiredJwtException | UnsupportedJwtException | MalformedJwtException e) {
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             response.sendError(401, e.getMessage());
+        } catch (UserNotFound e) {
+            logger.warn("Posible robo de datos sensibles!");
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            response.sendError(401, e.getMessage());
         } catch (Exception e) {
-            logger.error(e.getMessage());
+            logger.error(e);
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             response.sendError(500, "¡Error desconocido!");
         }
@@ -73,15 +78,31 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
      * Metodo para autenticarnos dentro del flujo de Spring
      * 
      * @param claims
+     * @throws UserNotFound
      */
-    private void setUpSpringAuthentication(Claims claims) {
+    private void setUpSpringAuthentication(HttpServletRequest request, Claims claims) throws UserNotFound {
         @SuppressWarnings("unchecked")
-        List<String> authorities = (List<String>) claims.get("authorities");
+        final var authorities = (List<String>) claims.get("authorities");
+        final var email = claims.getSubject();
 
-        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(claims.getSubject(), null,
+        final var auth = new UsernamePasswordAuthenticationToken(email, null,
                 authorities.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList()));
         SecurityContextHolder.getContext().setAuthentication(auth);
+        
+        getUserService(request);
+        final var user = userService.findUserByEmail(email);
 
+        final var session = request.getSession();
+        session.setAttribute("userId", user.getId());
+        session.setAttribute("user", user);
+    }
+
+    private void getUserService(HttpServletRequest request) {
+        if (userService == null) {
+            final var context = request.getServletContext();
+            final var ctx = WebApplicationContextUtils.getWebApplicationContext(context);
+            userService = ctx.getBean(UserService.class);
+        }
     }
 
     private boolean existsJWTToken(HttpServletRequest request, HttpServletResponse res) {

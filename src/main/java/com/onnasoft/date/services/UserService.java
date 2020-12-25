@@ -1,6 +1,12 @@
 package com.onnasoft.date.services;
 
 import java.security.NoSuchAlgorithmException;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.ArrayList;
+
+import javax.sql.DataSource;
+
 import com.onnasoft.date.models.User;
 import com.onnasoft.date.repository.UserRepository;
 import com.onnasoft.date.utils.Secure;
@@ -114,5 +120,19 @@ public class UserService {
             throw new UserNotFound();
         }
         return users.iterator().next();
+    }
+
+    /**
+     * TODO Esta funcion debe traer los perfiles recomendados.
+     * 
+     * @throws SQLException
+     */
+    public ArrayList<User.Profile> getRecommends() {
+        var users = repository.findAll();
+        var result = new ArrayList<User.Profile>();
+        users.forEach((user) -> {
+            result.add(user.getProfile());
+        });
+        return result;
     }
 }

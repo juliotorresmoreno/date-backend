@@ -1,6 +1,5 @@
 package com.onnasoft.date.controllers;
 
-import java.util.ArrayList;
 import java.util.logging.Logger;
 
 import com.onnasoft.date.models.User;
@@ -9,14 +8,12 @@ import com.onnasoft.date.services.UserService;
 import com.onnasoft.date.services.UserService.UserServiceException;
 import com.onnasoft.date.utils.Secure;
 
-import org.hibernate.mapping.Array;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -75,14 +72,14 @@ public class UsersController {
     public ResponseEntity<POSTSignInResponse> POSTSignIn(@RequestParam(value = "email") String email,
             @RequestParam(value = "password") String password) {
         try {
-            var user = userService.authenticate(email, password);
-            var profile = user.getProfile();
-            String secret = env.getProperty("secret");
-            var token = Secure.getJWTToken(secret, profile.getEmail());
-            var response = new POSTSignInResponseOK(token, profile);
+            final var user = userService.authenticate(email, password);
+            final var profile = user.getProfile();
+            final var secret = env.getProperty("secret");
+            final var token = Secure.getJWTToken(secret, profile.getEmail());
+            final var response = new POSTSignInResponseOK(token, profile);
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (UserServiceException e) {
-            var response = new POSTSignInResponseError(e.getMessage());
+            final var response = new POSTSignInResponseError(e.getMessage());
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
             logger.warning(e.getMessage());

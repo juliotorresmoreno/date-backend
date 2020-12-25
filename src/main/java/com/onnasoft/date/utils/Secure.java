@@ -73,7 +73,7 @@ public class Secure {
                 .claim("authorities",
                         grantedAuthorities.stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 7200 * 1000))
+                .setExpiration(new Date(System.currentTimeMillis() + 3600 * 24 * 1000))
                 .signWith(SignatureAlgorithm.HS512, encriptedKey.getBytes()).compact();
 
         return "Bearer " + token;
