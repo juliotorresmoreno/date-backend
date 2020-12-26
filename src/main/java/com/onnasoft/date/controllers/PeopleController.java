@@ -2,6 +2,8 @@ package com.onnasoft.date.controllers;
 
 import java.util.ArrayList;
 
+import javax.servlet.http.HttpServletRequest;
+
 import com.onnasoft.date.models.User;
 import com.onnasoft.date.services.UserService;
 
@@ -28,16 +30,18 @@ public class PeopleController {
         GETIndexOK() {
         }
 
-        GETIndexOK(ArrayList<User.Profile> people) {
-            people.forEach(profile -> {
-                this.add(profile);
+        GETIndexOK(Iterable<User> people) {
+            people.forEach(user -> {
+                this.add(user.getProfile());
             });
         }
     }
 
     @GetMapping("")
-    public ResponseEntity<GETIndex> GETIndex() {
-        var people = userService.getRecommends();
+    public ResponseEntity<GETIndex> GETIndex(HttpServletRequest request) {
+        final var session = request.getSession();
+        final var user = (User)session.getAttribute("user");
+        final var people = userService.getRecommendsForUser(user);
         return new ResponseEntity<>(new GETIndexOK(people), HttpStatus.OK);
     }
 }

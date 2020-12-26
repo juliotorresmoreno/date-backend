@@ -15,9 +15,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -68,11 +67,41 @@ public class UsersController {
         }
     }
 
-    @PostMapping("/sign-in")
-    public ResponseEntity<POSTSignInResponse> POSTSignIn(@RequestParam(value = "email") String email,
-            @RequestParam(value = "password") String password) {
+    public static class POSTSignInBody {
+        String email;
+        String password;
+
+        public POSTSignInBody() {
+        }
+
+        public String getEmail() {
+            return email;
+        }
+
+        public void setEmail(String email) {
+            this.email = email;
+        }
+
+        public String getPassword() {
+            return password;
+        }
+
+        public void setPassword(String password) {
+            this.password = password;
+        }
+    }
+
+    private void POSTSignInValidate(POSTSignInBody data) {
+
+    }
+
+    @PostMapping(value = "/sign-in", consumes = { MediaType.APPLICATION_JSON_VALUE,
+            MediaType.APPLICATION_XML_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE,
+                    MediaType.APPLICATION_XML_VALUE })
+    public ResponseEntity<POSTSignInResponse> POSTSignIn(@RequestBody POSTSignInBody content) {
         try {
-            final var user = userService.authenticate(email, password);
+            POSTSignInValidate(content);
+            final var user = userService.authenticate(content.getEmail(), content.getPassword());
             final var profile = user.getProfile();
             final var secret = env.getProperty("secret");
             final var token = Secure.getJWTToken(secret, profile.getEmail());
@@ -83,7 +112,7 @@ public class UsersController {
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
             logger.warning(e.getMessage());
-            var response = new POSTSignInResponseError("Ha ocurrido un error interno del servidor!");
+            final var response = new POSTSignInResponseError("Ha ocurrido un error interno del servidor!");
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -121,25 +150,78 @@ public class UsersController {
         }
     }
 
-    @RequestMapping(value = "/sign-up", method = RequestMethod.POST, produces = { MediaType.APPLICATION_JSON_VALUE,
-            MediaType.APPLICATION_XML_VALUE })
-    public ResponseEntity<POSTSignUpResponse> POSTSignUp(@RequestParam(value = "firstname") String firstname,
-            @RequestParam(value = "lastname") String lastname, @RequestParam(value = "email") String email,
-            @RequestParam(value = "phone") String phone, @RequestParam(value = "password") String password) {
+    public static class POSTSignUpBody {
+        String firstname;
+        String lastname;
+        String email;
+        String phone;
+        String password;
+
+        public String getEmail() {
+            return email;
+        }
+
+        public void setEmail(String email) {
+            this.email = email;
+        }
+
+        public String getFirstname() {
+            return firstname;
+        }
+
+        public void setFirstname(String firstname) {
+            this.firstname = firstname;
+        }
+
+        public String getLastname() {
+            return lastname;
+        }
+
+        public void setLastname(String lastname) {
+            this.lastname = lastname;
+        }
+
+        public String getPassword() {
+            return password;
+        }
+
+        public void setPassword(String password) {
+            this.password = password;
+        }
+
+        public String getPhone() {
+            return phone;
+        }
+
+        public void setPhone(String phone) {
+            this.phone = phone;
+        }
+    }
+
+    private void POSTSignUpValidate(POSTSignUpBody data) {
+
+    }
+
+    @PostMapping(value = "/sign-up", consumes = { MediaType.APPLICATION_JSON_VALUE,
+            MediaType.APPLICATION_XML_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE,
+                    MediaType.APPLICATION_XML_VALUE })
+    public ResponseEntity<POSTSignUpResponse> POSTSignUp(@RequestBody POSTSignUpBody content) {
         try {
-            var user = new User(firstname, lastname, email, phone, password);
+            POSTSignUpValidate(content);
+            final var user = new User(content.getFirstname(), content.getLastname(), content.getEmail(), content.getPhone(),
+                    content.getPassword());
             userService.save(user);
-            var response = new POSTSignUpResponseOK();
+            final var response = new POSTSignUpResponseOK();
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (UserServiceException e) {
-            var response = new POSTSignUpResponseError(e.getMessage());
+            final var response = new POSTSignUpResponseError(e.getMessage());
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         } catch (DataIntegrityViolationException e) {
-            var response = new POSTSignUpResponseError("El correo electonico ya ha sido registrado!");
+            final var response = new POSTSignUpResponseError("El correo electonico ya ha sido registrado!");
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
             logger.warning(e.getMessage());
-            var response = new POSTSignUpResponseError("Ha ocurrido un error interno del servidor!");
+            final var response = new POSTSignUpResponseError("Ha ocurrido un error interno del servidor!");
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

@@ -127,12 +127,13 @@ public class UserService {
      * 
      * @throws SQLException
      */
-    public ArrayList<User.Profile> getRecommends() {
+    public Iterable<User> getRecommends() {
         var users = repository.findAll();
-        var result = new ArrayList<User.Profile>();
-        users.forEach((user) -> {
-            result.add(user.getProfile());
-        });
-        return result;
+        return users;
+    }
+
+    public Iterable<User> getRecommendsForUser(User user) {
+        var users = repository.findAll();
+        return users;
     }
 }

@@ -28,6 +28,16 @@ Accept: application/json
 email=jtorres990@gmail.com&password=12345678
 
 ###
+POST http://localhost:8080/users/sign-in
+Content-Type: application/json
+Accept: application/json
+
+{
+    "email": "jtorres990@gmail.com",
+    "password": "12345678"
+}
+
+###
 GET http://localhost:8080/cities
 
 ###

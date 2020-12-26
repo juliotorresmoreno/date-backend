@@ -1,12 +1,9 @@
 package com.onnasoft.date.controllers;
 
 import javax.servlet.http.HttpServletRequest;
-
-import com.onnasoft.date.http.ProfilePATCHIndexBody;
 import com.onnasoft.date.models.Profile;
 import com.onnasoft.date.models.User;
 import com.onnasoft.date.services.ProfileService;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -37,11 +34,22 @@ public class ProfileController {
         }
     }
 
+    public static class PATCHIndexBody extends Profile {
+        PATCHIndexBody() {
+    
+        }
+    }
+
+    private void PATCHIndexValidate(PATCHIndexBody data) {
+
+    }
+
     @PatchMapping(value = "", consumes = { MediaType.APPLICATION_JSON_VALUE,
             MediaType.APPLICATION_XML_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE,
                     MediaType.APPLICATION_XML_VALUE })
-    ResponseEntity<PATCHIndex> PATCHIndex(HttpServletRequest request, @RequestBody ProfilePATCHIndexBody content) {
+    ResponseEntity<PATCHIndex> PATCHIndex(HttpServletRequest request, @RequestBody PATCHIndexBody content) {
         try {
+            PATCHIndexValidate(content);
             final var session = request.getSession();
             final var user = (User) session.getAttribute("user");
             final var userId = user.getId();
