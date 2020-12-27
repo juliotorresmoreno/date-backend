@@ -35,9 +35,6 @@ public class ProfileController {
     }
 
     public static class PATCHIndexBody extends Profile {
-        PATCHIndexBody() {
-    
-        }
     }
 
     private void PATCHIndexValidate(PATCHIndexBody data) {
@@ -71,6 +68,7 @@ public class ProfileController {
             currentProfile.setPetsIfValue(content.getPets());
             currentProfile.setSmokerIfValue(content.getSmoker());
             currentProfile.setTitleIfValue(content.getTitle());
+            currentProfile.setPhotoUrlIfValue(content.getPhotoUrl());
             profileService.save(currentProfile);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception e) {

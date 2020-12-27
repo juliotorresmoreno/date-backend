@@ -17,6 +17,7 @@ public class Profile {
     private Long id;
     private Long userId;
 
+    private String photoUrl;
     private String countryOfBirth;
     private Date birthDate;
     private String countryOfResidence;
@@ -41,6 +42,19 @@ public class Profile {
 
     public void setUserId(Long userId) {
         this.userId = userId;
+    }
+
+    public String getPhotoUrl() {
+        return photoUrl;
+    }
+
+    public void setPhotoUrl(String photoUrl) {
+        this.photoUrl = photoUrl;
+    }
+
+    public void setPhotoUrlIfValue(String photoUrl) {
+        if (photoUrl != null && !photoUrl.equals(""))
+            setPhotoUrl(photoUrl);
     }
 
     public String getCountryOfBirth() {
